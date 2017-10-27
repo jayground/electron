@@ -9,12 +9,52 @@
 		<nav class="nav-wrapper">
 			<a class="brand-logo center">Electron Test</a>
 		</nav>
+		<table>
+			<thead>
+				<tr>
+					<td>달러환율(한국수출입은행)</td>
+					<td>BTC-XRP(USD)</td>
+					<td>Bittrex XRP(KRW)</td>
+					<td>Coinone XRP(KRW)</td>
+					<td>차이</td>
+				</tr>
+			</thead>
+		</table>
+		<canvas id="myChart" width="600" height="400"></canvas>
 		<ul></ul>
 
 		<script>
+			const Chart = require('chart.js');
+			let ctx = document.getElementById('myChart');
+			let myChart = new Chart(ctx, {
+				type: 'line',
+				data: {
+					labels: [],
+					datasets: [ {
+						data: [],
+						label: 'test',
+						fill: false
+					}]
+				},
+				options: {
+					title: {
+						display: true,
+						text: 'chart test'
+					},
+					responsive: false
+				}
+			})
+
+
 			const electron = require('electron');
 			const {ipcRenderer} = electron;
 			const ul = document.querySelector('ul');
+			ipcRenderer.on('send:price', function(e,item){
+				console.log("price information is sent!");
+				myChart.data.labels.push(item.TimeStamp);
+				myChart.data.datasets[0].data.push(item.Last);
+				myChart.update();
+			});
 
 			ipcRenderer.on('item:add', function(e,item){
 				ul.className = 'collection';

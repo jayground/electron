@@ -10,9 +10,14 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "chart.js": "^2.7.0",
     "electron": "^1.7.9",
     "electron-package": "^0.1.0",
-    "extract-zip": "^1.6.5"
+    "extract-zip": "^1.6.5",
+    "node-bittrex-api": "^0.7.6",
+    "request": "^2.83.0",
+    "request-promise": "^4.2.2",
+    "socket.io-client": "^2.0.4"
   },
   "devDependencies": {
     "electron-packager": "^9.1.0"
