@@ -1,83 +1,215 @@
 <!DOCTYPE html>
 <html>
 	<head>
-	  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
-
+	  <link rel="stylesheet" href="./assets/materialize/css/materialize.min.css">
+	  <link rel="stylesheet" href="./assets/font-awesome-4.7.0/css/font-awesome.min.css">
+		<style>
+			/*table {
+				margin: 5px;
+			}*/
+			td {
+				border:1px solid black;
+			}
+			.nav-dark {
+				background-color: #cde0df;
+			}
+			.on-color {
+				color: yellow!important;
+			}
+			.off-color {
+				color: #7b8f8e!important;
+			}
+			.inline-vertial-center {
+				display: inline;
+				vertical-align: middle;
+				margin-right: 10px;
+			}
+		</style>
 		<title>Test</title>
 	</head>
 	<body>
-		<nav class="nav-wrapper">
-			<a class="brand-logo center">Electron Test</a>
+		<nav class="nav-wrapper nav-dark">
+			<a class="brand-logo left off-color" id="title">
+				Coin Generator
+				<i class="fa fa-btc"></i>
+			</a>
+			<ul id="nav-mobile" class="right">
+				<li id="power-btn"><i class="fa fa-3x fa-power-off off-color inline-vertial-center" id="power_icon"></i></li>
+			</ul>
 		</nav>
-		<table>
+		<div>
+			<i class="fa fa-bank"></i>
+			coinone : <span id=c_btc_balance></span>btc <span id="c_xrp_balance"></span>xrp
+			<i class="fa fa-bank"></i>
+			bitrex : <span id="b_btc_balance"></span>btc <span id="b_xrp_balance"></span>xrp
+		</div>
+		<table style="border:1px solid black;">
 			<thead>
 				<tr>
-					<td>달러환율(한국수출입은행)</td>
-					<td>BTC-XRP(USD)</td>
-					<td>Bittrex XRP(KRW)</td>
-					<td>Coinone XRP(KRW)</td>
-					<td>차이</td>
+					<td colspan="2">Coinone</td>
+					<td colspan="2">Bittrex</td>
+					<td colspan="2">Profit</td>
+				</tr>
+				<tr>
+					<td>BTC</td>
+					<td>XRP</td>
+					<td>XRP</td>
+					<td>BTC_XRP</td>
+					<td>Difference</td>
+					<td>1 BTC</td>
 				</tr>
 			</thead>
+			<tbody>
+				<tr>
+					<td id="btc"></td>
+					<td id="xrp"></td>
+					<td id="xrp_bittrex"></td>
+					<td id="btc_xrp"></td>
+					<td id="diff"></td>
+					<td id="profit_per_1btc"></td>
+				</tr>
+			</tbody>
 		</table>
-		<canvas id="myChart" width="600" height="400"></canvas>
+		<!-- <canvas id="myChart" width="600" height="400"></canvas>
 		<ul></ul>
-
+ -->
 		<script>
-			const Chart = require('chart.js');
-			let ctx = document.getElementById('myChart');
-			let myChart = new Chart(ctx, {
-				type: 'line',
-				data: {
-					labels: [],
-					datasets: [ {
-						data: [],
-						label: 'test',
-						fill: false
-					}]
-				},
-				options: {
-					title: {
-						display: true,
-						text: 'chart test'
-					},
-					responsive: false
-				}
-			})
+
+			// const Chart = require('chart.js');
+			// let ctx = document.getElementById('myChart');
+			// let myChart = new Chart(ctx, {
+			// 	type: 'line',
+			// 	data: {
+			// 		labels: [],
+			// 		datasets: [ {
+			// 			data: [],
+			// 			label: 'test',
+			// 			fill: false
+			// 		}]
+			// 	},
+			// 	options: {
+			// 		title: {
+			// 			display: true,
+			// 			text: 'chart test'
+			// 		},
+			// 		responsive: false
+			// 	}
+			// })
 
 
 			const electron = require('electron');
 			const {ipcRenderer} = electron;
 			const ul = document.querySelector('ul');
-			ipcRenderer.on('send:price', function(e,item){
-				console.log("price information is sent!");
-				myChart.data.labels.push(item.TimeStamp);
-				myChart.data.datasets[0].data.push(item.Last);
-				myChart.update();
+			const btcTD = document.getElementById('btc');
+			const xrpTD = document.getElementById('xrp');
+			const xrp_bittrexTD = document.getElementById('xrp_bittrex');
+			const btc_xrpTD = document.getElementById('btc_xrp');
+			const diffTD = document.getElementById('diff');
+			const profit_per_1btcTD = document.getElementById('profit_per_1btc');
+			const power_btn = document.getElementById('power-btn');
+			const title = document.getElementById('title');
+			const power_icon = document.getElementById('power_icon');
+			const c_btc_balance = document.getElementById('c_btc_balance');
+			const c_xrp_balance = document.getElementById('c_xrp_balance');
+			const b_btc_balance = document.getElementById('b_btc_balance');
+			const b_xrp_balance = document.getElementById('b_xrp_balance');
+			let power = false;
+
+			power_btn.addEventListener('click', () => {
+				if (!power) {
+					power = true
+					ipcRenderer.send('power:on');
+					removeClass(title, 'off-color');
+					removeClass(power_icon, 'off-color');
+					addClass(title, 'on-color');
+					addClass(power_icon, 'on-color');
+				} else {
+					power = false;
+					title.style.color = 'white';
+					removeClass(title, 'on-color');
+					removeClass(power_icon, 'on-color');
+					addClass(title, 'off-color');
+					addClass(power_icon, 'off-color');
+				}
 			});
 
-			ipcRenderer.on('item:add', function(e,item){
-				ul.className = 'collection';
-				const li = document.createElement('li');
-				li.className = 'collection-item';
-				const itemText = document.createTextNode(item);
-				li.appendChild(itemText);
-				ul.appendChild(li);
-			}); 
+			function addClass(element, className) {
+				element.className += " " + className;
+			}
 
-			ipcRenderer.on('item:clear', function(){
-				ul.innerHTML = '';
-				ul.className = '';
+			function removeClass(element, className) {
+				const check = new RegExp("(\\s|^)" + className + "(\\s|$)");
+				element.className = element.className.replace(check, " ").trim();
+			}
+
+			ipcRenderer.on('send:btc', function(e, btc) {
+				btcTD.innerHTML = btc;
+			});
+			ipcRenderer.on('send:xrp', function(e, xrp) {
+				xrpTD.innerHTML = xrp;
+			});
+			ipcRenderer.on('send:xrp_bittrex', function(e, xrp_bittrex) {
+				xrp_bittrexTD.innerHTML = xrp_bittrex;
+			});
+			ipcRenderer.on('send:btc_xrp', function(e, btc_xrp) {
+				btc_xrpTD.innerHTML = btc_xrp;
+			});
+			ipcRenderer.on('send:diff', function(e, diff) {
+				diffTD.innerHTML = diff;
+			});
+			ipcRenderer.on('send:profit_per_1btc', function(e, profit_per_1btc) {
+				profit_per_1btcTD.innerHTML = profit_per_1btc;
+			});
+			ipcRenderer.on('coinone:xrp_balance', function(e, xrp_balance) {
+				nullIsZero(c_xrp_balance, xrp_balance);
+			});
+			ipcRenderer.on('coinone:btc_balance', function(e, btc_balance) {
+				nullIsZero(c_btc_balance, btc_balance);
+			});
+			ipcRenderer.on('bittrex:xrp_balance', function(e, xrp_balance) {
+				nullIsZero(b_xrp_balance, xrp_balance);
+			});
+			ipcRenderer.on('bittrex:btc_balance', function(e, btc_balance) {
+				nullIsZero(b_btc_balance, btc_balance);
 			});
 
-			ul.addEventListener('dblclick', removeItem);
-
-			function removeItem(e){
-				e.target.remove();
-				if(ul.children.length == 0){
-					ul.className = '';
+			function nullIsZero(element, balance) {
+				if (balance) {
+					element.innerHTML = balance;
+				} else {
+					element.innerHTML = 0;
 				}
 			}
+
+			// ipcRenderer.on('send:price', function(e,item){
+			// 	console.log("price information is sent!");
+			// 	myChart.data.labels.push(item.TimeStamp);
+			// 	myChart.data.datasets[0].data.push(item.Last);
+			// 	myChart.update();
+			// });
+
+			// ipcRenderer.on('item:add', function(e,item){
+			// 	ul.className = 'collection';
+			// 	const li = document.createElement('li');
+			// 	li.className = 'collection-item';
+			// 	const itemText = document.createTextNode(item);
+			// 	li.appendChild(itemText);
+			// 	ul.appendChild(li);
+			// }); 
+
+			// ipcRenderer.on('item:clear', function(){
+			// 	ul.innerHTML = '';
+			// 	ul.className = '';
+			// });
+
+			// ul.addEventListener('dblclick', removeItem);
+
+			// function removeItem(e){
+			// 	e.target.remove();
+			// 	if(ul.children.length == 0){
+			// 		ul.className = '';
+			// 	}
+			// }
 		</script>
 	</body>
 </html>
