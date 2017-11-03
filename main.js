@@ -78,6 +78,54 @@ ipcMain.on('power:on', function(e) {
 		json: true
 	}
 	
+	setInterval(function() {
+		// get coinone all coin balance
+		rp(coin_balance_op)
+			.then((result) => {
+				console.log(result);
+				coin_xrp_balance = result.xrp.balance;
+				coin_xrp_available = result.xrp.avail;
+				coin_btc_balance = result.btc.balance;
+				coin_btc_available = result.btc.avail;
+				coin_krw_balance = result.krw.balance;
+				coin_krw_available = result.krw.avail;
+				mainWindow.webContents.send('coinone:xrp_balance', coin_xrp_balance);
+				mainWindow.webContents.send('coinone:xrp_available', coin_xrp_available);
+				mainWindow.webContents.send('coinone:btc_balance', coin_btc_balance);
+				mainWindow.webContents.send('coinone:btc_available', coin_btc_available);
+				mainWindow.webContents.send('coinone:krw_balance', coin_krw_balance);
+				mainWindow.webContents.send('coinone:krw_available', coin_krw_available);
+			})
+			.catch((err) => {
+				console.error(err);
+			})
+
+		// get bittrex xrp balance
+		rp(bit_xrp_balance_op)
+			.then((result) => {
+				console.log(result);
+				bit_xrp_balance = result.result.Balance;
+				bit_xrp_available = result.result.Available;
+				mainWindow.webContents.send('bittrex:xrp_balance', bit_xrp_balance);
+				mainWindow.webContents.send('bittrex:xrp_available', bit_xrp_available);
+			})
+			.catch((err) => {
+				console.error(err);
+			})
+
+		// get bittrex btc balance
+		rp(bit_btc_balance_op)
+			.then((result) => {
+				console.log(result);
+				bit_btc_balance = result.result.Balance;
+				bit_btc_available = result.result.Available;
+				mainWindow.webContents.send('bittrex:btc_balance', bit_btc_balance);
+				mainWindow.webContents.send('bittrex:btc_available', bit_btc_available);
+			})
+			.catch((err) => {
+				console.error(err);
+			})
+		}, 60000)
 	// get initial value
 	rp(coinoneTicker)
 		.then((coinone_result) => {
@@ -86,7 +134,7 @@ ipcMain.on('power:on', function(e) {
 			return rp(bittrexTicker)
 		})
 		.then((bittrex_result) => {
-			btc_xrp = bittrex_result.result.Ask;
+			btc_xrp = bittrex_result.result.Bid; //매수가격
 			mainWindow.webContents.send('send:btc_xrp', btc_xrp);
 			mainWindow.webContents.send('send:xrp', xrp);
 			mainWindow.webContents.send('send:btc', btc);
@@ -97,58 +145,11 @@ ipcMain.on('power:on', function(e) {
 		.catch((err) => {
 			console.error("initial load had an error", err);
 		});
-	
-	// get coinone all coin balance
-	rp(coin_balance_op)
-		.then((result) => {
-			console.log(result);
-			coin_xrp_balance = result.xrp.balance;
-			coin_xrp_available = result.xrp.avail;
-			coin_btc_balance = result.btc.balance;
-			coin_btc_available = result.btc.avail;
-			coin_krw_balance = result.krw.balance;
-			coin_krw_available = result.krw.avail;
-			mainWindow.webContents.send('coinone:xrp_balance', coin_xrp_balance);
-			mainWindow.webContents.send('coinone:xrp_available', coin_xrp_available);
-			mainWindow.webContents.send('coinone:btc_balance', coin_btc_balance);
-			mainWindow.webContents.send('coinone:btc_available', coin_btc_available);
-			mainWindow.webContents.send('coinone:krw_balance', coin_krw_balance);
-			mainWindow.webContents.send('coinone:krw_available', coin_krw_available);
-		})
-		.catch((err) => {
-			console.error(err);
-		})
-
-	// get bittrex xrp balance
-	rp(bit_xrp_balance_op)
-		.then((result) => {
-			console.log(result);
-			bit_xrp_balance = result.result.Balance;
-			bit_xrp_available = result.result.Available;
-			mainWindow.webContents.send('bittrex:xrp_balance', bit_xrp_balance);
-			mainWindow.webContents.send('bittrex:xrp_available', bit_xrp_available);
-		})
-		.catch((err) => {
-			console.error(err);
-		})
-
-	// get bittrex btc balance
-	rp(bit_btc_balance_op)
-		.then((result) => {
-			console.log(result);
-			bit_btc_balance = result.result.Balance;
-			bit_btc_available = result.result.Available;
-			mainWindow.webContents.send('bittrex:btc_balance', bit_btc_balance);
-			mainWindow.webContents.send('bittrex:btc_available', bit_btc_available);
-		})
-		.catch((err) => {
-			console.error(err);
-		})
 
 	mainWindow.webContents.send('coinone:xrp_tag', secretInfo.coinone_xrp_tag);
 	mainWindow.webContents.send('coinone:xrp_address', secretInfo.coinone_xrp_address);
-	mainWindow.webContents.send('bittrex:xrp_tag', secretInfo.bittrex_xrp_tag);
-	mainWindow.webContents.send('bittrex:xrp_address', secretInfo.bittrex_xrp_address);
+	// mainWindow.webContents.send('bittrex:xrp_tag', secretInfo.bittrex_xrp_tag);
+	mainWindow.webContents.send('bittrex:btc_address', secretInfo.bittrex_btc_address);
 });
 
 // coinone private API call
@@ -217,7 +218,7 @@ function bittrexWebsocket() {
 				data_for.Deltas.forEach(function(marketsDelta) {
 					if(marketsDelta.MarketName === 'BTC-XRP') {
 						console.log('bittrex btc-xrp: ', marketsDelta.Ask)
-						btc_xrp = marketsDelta.Ask
+						btc_xrp = marketsDelta.Ask //매수가격
 						mainWindow.webContents.send('send:btc_xrp', btc_xrp);
 						caculateBTCXRP(btc, xrp, btc_xrp);
 					}

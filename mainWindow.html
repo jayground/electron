@@ -4,11 +4,18 @@
 	  <link rel="stylesheet" href="./assets/materialize/css/materialize.min.css">
 	  <link rel="stylesheet" href="./assets/font-awesome-4.7.0/css/font-awesome.min.css">
 		<style>
+			body {
+				background-color: #fcfcfc;
+			}
 			td {
 				border:1px solid black;
+				padding: 5px 5px;
 			}
 			.nav-dark {
 				background-color: #cde0df;
+				margin-bottom: 10px;
+				height: 40px;
+				line-height: 40px;
 			}
 			.on-color {
 				color: yellow!important;
@@ -21,6 +28,28 @@
 				vertical-align: middle;
 				margin-right: 10px;
 			}
+			.only-right-padding {
+				padding: 0 0!important;
+				padding-right: 5px!important;
+			}
+			.only-left-padding {
+				padding: 0 0!important;
+				padding-left: 5px!important;
+			}
+			.text-center {
+				text-align: center;
+			}
+			.card-panel {
+				padding: 15px;
+				margin: .4rem 0 .4rem 0;
+			}
+			.row {
+				margin-bottom: 5px;
+			}
+			input {
+				margin: 0 0 5px 0!important;
+				text-align: right;
+			}
 		</style>
 		<title>Test</title>
 	</head>
@@ -31,46 +60,225 @@
 				<i class="fa fa-btc"></i>
 			</a>
 			<ul id="nav-mobile" class="right">
-				<li id="power-btn"><i class="fa fa-3x fa-power-off off-color inline-vertial-center" id="power_icon"></i></li>
+				<li id="power-btn"><i class="fa fa-2x fa-power-off off-color inline-vertial-center" id="power_icon"></i></li>
 			</ul>
 		</nav>
 		
-		<div>
-			<i class="fa fa-bank"></i>
-			coinone : <span id=c_btc_balance></span>btc <span id="c_xrp_balance"></span>xrp
-			<i class="fa fa-bank"></i>
-			bitrex : <span id="b_btc_balance"></span>btc <span id="b_xrp_balance"></span>xrp
-		</div>
-		
-		<table style="border:1px solid black;">
-			<thead>
-				<tr>
-					<td colspan="2">Coinone</td>
-					<td colspan="2">Bittrex</td>
-					<td colspan="2">Profit</td>
-				</tr>
-				<tr>
-					<td>BTC</td>
-					<td>XRP</td>
-					<td>XRP</td>
-					<td>BTC_XRP</td>
-					<td>Difference</td>
-					<td>1 BTC</td>
-				</tr>
-			</thead>
-			<tbody>
-				<tr>
-					<td id="btc"></td>
-					<td id="xrp"></td>
-					<td id="xrp_bittrex"></td>
-					<td id="btc_xrp"></td>
-					<td id="diff"></td>
-					<td id="profit_per_1btc"></td>
-				</tr>
-			</tbody>
-		</table>
-		
 		<div class="row">
+			<div class="col s6">
+				<div class="card-panel">
+					<table style="border:1px solid black;">
+						<thead>
+							<tr >
+								<td colspan="2">코인원</td>
+								<td colspan="2">비트렉스</td>
+								<td colspan="2">이익</td>
+							</tr>
+							<tr>
+								<td>BTC(ASK)</td>
+								<td>XRP(BID)</td>
+								<td>XRP</td>
+								<td>BTC_XRP(ASK)</td>
+								<td>차이</td>
+								<td>1 BTC 당 이익</td>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td id="btc">0</td>
+								<td id="xrp">0</td>
+								<td id="xrp_bittrex">0</td>
+								<td id="btc_xrp">0</td>
+								<td id="diff">0</td>
+								<td id="profit_per_1btc">0</td>
+							</tr>
+						</tbody>
+					</table>
+						<div class="row">
+							<p><i class="fa fa-calculator"></i> 시뮬레이션	</p>
+							<div class="col s3">
+								<div class="row" style="display:flex; align-items: center;">
+									<div class="col s9" style="padding: 0;">
+										<input type="number" id="simulation_btc_amount" placeholder="BTC 거래량" value=1 min=0>
+									</div>
+									<div class="col s3" style="padding: 0;">
+										<i class="fa fa-btc"></i>
+									</div>
+								</div>
+								<span id="simulation_start_krw">0</span> <i class="fa fa-krw"></i>
+							</div>
+							<div class="col s3">
+								<p>코인원 구매</p>
+								<span id="simulation_coin_btc_buy">0</span> <i class="fa fa-btc"></i>
+							</div>
+							<div class="col s3">
+								<p>비트렉스 구매</p>
+								<span id="simulation_bit_xrp_buy">0</span> xrp
+							</div>
+							<div class="col s3">
+								<p>코인원 판매</p>
+								<span id="simulation_coin_xrp_sell">0</span> <i class="fa fa-krw"></i>
+							</div>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col s6 only-right-padding">
+							<div class="card-panel">
+								<div>
+									<i class="fa fa-bank"></i> 코인원 잔액
+								</div>
+								<div>
+									<span id=coin_krw_balance>0</span> <i class="fa fa-krw"></i>
+								</div>
+								<div>
+									<span id=coin_btc_balance>0</span> <i class="fa fa-btc"></i>
+								</div>
+								<div>
+									<span id=coin_xrp_balance>0</span> xrp
+								</div>
+							</div>
+						</div>
+						<div class="col s6 only-left-padding">
+							<div class="card-panel">
+								<div>
+									<i class="fa fa-bank"></i> 비트렉스 잔액
+								</div>
+								<div>
+									<br>
+								</div>
+								<div>
+									<span id=bit_btc_balance>0</span> <i class="fa fa-btc"></i>
+								</div>
+								<div>
+									<span id=bit_xrp_balance>0</span> xrp
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="row">
+					<div class="col s6 only-right-padding">
+						<div class="card-panel">
+							<p style="margin:0;"> 비트렉스 출금 <i class="fa fa-arrow-circle-right"></i> 코인원</p>
+							<form>
+								<div class="col s6">
+									<label for="bit_available_xrp">사용 가능 XRP</label>
+									<input type="text" id="bit_available_xrp" readonly>
+								</div>
+								<div class="col s6">
+									<label for="bit_to_coin_rxp">보낼 XRP 수량</label>
+									<input type="number" id="bit_to_coin_rxp">
+								</div>	
+							</form>
+							<div class="text-center">
+								<button class="waves-effect waves-light btn">출금</button>
+							</div>
+						</div>
+					</div>
+					<div class="col s6 only-left-padding">
+						<div class="card-panel">
+							<p style="margin:0;">코인원 출금 <i class="fa fa-arrow-circle-right"></i> 비트렉스</p>
+							<form>
+								<div class="col s6">
+									<label for="coin_available_btc">사용 가능 BTC</label>
+									<input type="text" id="coin_available_btc" readonly>
+								</div>
+								<div class="col s6">
+									<label for="coin_to_bit_btc">보낼 BTC 수량</label>
+									<input type="number" id="coin_to_bit_btc">
+								</div>	
+							</form>
+							<div class="text-center">
+								<button class="waves-effect waves-light btn">출금</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col s6">
+				<div class="card-panel">
+					<div>
+						비트렉스 BTC 지갑 주소 <i class="fa fa-address-book"></i> : 
+						<span id="bit_btc_address"></span>
+					</div>
+				</div>
+				<div class="card-panel">
+					<div>
+						코인원 XRP 지갑 주소 <i class="fa fa-address-book"></i> : 
+						<span id="coin_xrp_address"></span>
+					</div>
+					<div>
+						코인원 XRP 지갑 태그 <i class="fa fa-tag"></i> : 
+						<span id="coin_xrp_tag"></span>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col s4 only-right-padding">
+						<div class="card-panel">
+							<p style="margin:0;"> 코인원 BTC 구매</p>
+							<form>
+								<label>BTC 가격(ASK)</label>
+								<input type="number" id="coin_btc_bid_price" readonly>
+								<label>사용가능한 금액</label>
+								<input type="number" id="coin_available_krw_buy" readonly>
+								<div>
+									<label>BTC 구매량</label>
+									<input type="number" id="coin_btc_buy_price">
+								</div>
+								<label>구매가격</label>
+								<input type="number" id="coin_btc_bid_price" readonly>
+								<div class="text-center">
+									<button class="waves-effect waves-light btn">구매</button>
+								</div>
+							</form>
+						</div>
+					</div>
+					<div class="col s4">
+						<div class="card-panel">
+							<p style="margin:0;"> 비트렉스 XRP 구매</p>
+							<form>
+								<label>BTC-XRP 가격</label>
+								<input type="number" id="bit_xrp_bid_price" readonly>
+								<label>사용가능한 BTC</label>
+								<input type="number" id="bit_available_btc_buy" readonly>
+								<div>
+									<label>XRP 구매량</label>
+									<input type="number" id="bit_xrp_buy_price" >
+								</div>
+								<label>구매가격</label>
+								<input type="number" id="bit_xrp_bid_price" readonly>
+								<div class="text-center">
+									<button class="waves-effect waves-light btn">구매</button>
+								</div>
+							</form>
+						</div>
+					</div>
+					<div class="col s4 only-left-padding">
+						<div class="card-panel">
+							<p style="margin:0;"> 코인원 XRP 판매</p>
+							<form>
+								<label>XRP 가격</label>
+								<input type="number" id="coin_xrp_bid_price" readonly>
+								<label>사용가능한 XRP</label>
+								<input type="number" id="coin_available_xrp_sell" readonly>
+								<div>
+									<label for="coin_xrp_sell_amount">XRP 판매량</label>
+									<input type="number" id="coin_xrp_sell_amount"/>
+								</div>
+								<label>판매가격</label>
+								<input type="number" id="coin_xrp_sell_price" readonly>
+								<div class="text-center">
+									<button class="waves-effect waves-light btn">판매</button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- <div class="row">
 			<div class="col s3">
 				<p>coinone <i class="fa fa-arrow-circle-right"></i> bittrex</p>
 				<form>
@@ -104,7 +312,7 @@
 				</form>
 			</div>
 			<div class="col s3">
-				<p>coinone buy</p>
+				<p>coinone BTC buy</p>
 				<form>
 					<div>
 						<label>Coinone KRW</label>
@@ -112,30 +320,29 @@
 						<label>Available KRW</label>
 						<input type="text" id="coin_available_krw_buy" readonly>
 						<label>BTC price</label>
-						<input type="number" id="coin_xrp_bid_price">
+						<input type="number" id="coin_btc_bid_price">
 						<label>BTC amount</label>
-						<input type="number" id="coin_xrp_buy_price">
+						<input type="number" id="coin_btc_buy_price">
 					</div>
 					<button class="waves-effect waves-light btn">buy</button>
 				</form>
 			</div>
-			<!-- <div class="col s3">
-				<p>coinone buy</p>
+			<div class="col s3">
+				<p>Bittrex XRP buy</p>
 				<form>
 					<div>
-						<label>Coinone KRW</label>
-						<input type="text" id="coin_xrp_sell" readonly>
-						<label>Available KRW</label>
-						<input type="text" id="coin_available_xrp_sell" readonly>
-						<label>XRP price</label>
-						<input type="number" id="coin_xrp_ask_price">
+						<label>Bittrex BTC</label>
+						<input type="text" id="bit_btc_buy" readonly>
+						
+						<label>BTC_XRP price</label>
+						<input type="number" id="bit_xrp_bid_price">
 						<label>XRP amount</label>
-						<input type="number" id="coin_xrp_sell_price">
+						<input type="number" id="bit_xrp_buy_price">
 					</div>
-					<button class="waves-effect waves-light btn">sell</button>
+					<button class="waves-effect waves-light btn">buy</button>
 				</form>
-			</div> -->
-		</div>
+			</div>
+		</div> -->
 		
 		<!-- <canvas id="myChart" width="600" height="400"></canvas>
 		<ul></ul>
@@ -176,24 +383,42 @@
 			const power_btn = document.getElementById('power-btn');
 			const title = document.getElementById('title');
 			const power_icon = document.getElementById('power_icon');
-			const c_btc_balance = document.getElementById('c_btc_balance');
-			const c_xrp_balance = document.getElementById('c_xrp_balance');
-			const b_btc_balance = document.getElementById('b_btc_balance');
-			const b_xrp_balance = document.getElementById('b_xrp_balance');
+			
+			const coin_krw_balance = document.getElementById('coin_krw_balance');
+			const coin_btc_balance = document.getElementById('coin_btc_balance');
+			const coin_xrp_balance = document.getElementById('coin_xrp_balance');
+			const bit_krw_balance = document.getElementById('bit_krw_balance');
+			const bit_btc_balance = document.getElementById('bit_btc_balance');
+			const bit_xrp_balance = document.getElementById('bit_xrp_balance');
+			
 			const coin_xrp_address = document.getElementById('coin_xrp_address');
-			const coin_available_xrp = document.getElementById('coin_available_xrp');
+			const coin_available_btc = document.getElementById('coin_available_btc');
 			const coin_xrp_tag = document.getElementById('coin_xrp_tag');
-			const bit_xrp_address = document.getElementById('bit_xrp_address');
+			const bit_btc_address = document.getElementById('bit_btc_address');
 			const bit_available_xrp = document.getElementById('bit_available_xrp');
 			const bit_xrp_tag = document.getElementById('bit_xrp_tag');
-			const coin_krw_buy = document.getElementById('coin_krw_buy');
+			
+			// const coin_krw_buy = document.getElementById('coin_krw_buy');
 			const coin_available_krw_buy = document.getElementById('coin_available_krw_buy');
+			const coin_btc_bid_price = document.getElementById('coin_btc_bid_price');
+			const coin_btc_buy_price = document.getElementById('coin_btc_buy_price');
+			
 			const coin_xrp_bid_price = document.getElementById('coin_xrp_bid_price');
-			const coin_xrp_buy_price = document.getElementById('coin_xrp_buy_price');
-			// const coin_xrp_sell = document.getElementById('coin_xrp_sell');
-			// const coin_available_xrp_sell = document.getElementById('coin_available_xrp_sell');
-			// const coin_xrp_ask_price = document.getElementById('coin_xrp_ask_price');
-			// const coin_xrp_sell_price = document.getElementById('coin_xrp_sell_price');
+			const coin_available_xrp_sell = document.getElementById('coin_available_xrp_sell');
+			const coin_xrp_sell_amount = document.getElementById('coin_xrp_sell_amount');
+			const coin_xrp_sell_price = document.getElementById('coin_xrp_sell_price');
+
+			const bit_btc_buy = document.getElementById('bit_btc_buy');
+			const bit_available_btc_buy = document.getElementById('bit_available_btc_buy');
+			const bit_xrp_bid_price = document.getElementById('bit_xrp_bid_price');
+			const bit_xrp_buy_price = document.getElementById('bit_xrp_buy_price');
+
+			const simulation_btc_amount = document.getElementById('simulation_btc_amount');
+			const simulation_start_krw = document.getElementById('simulation_start_krw');
+			const simulation_bit_xrp_buy = document.getElementById('simulation_bit_xrp_buy');
+			const simulation_coin_btc_buy = document.getElementById('simulation_coin_btc_buy');
+			const simulation_coin_xrp_sell = document.getElementById('simulation_coin_xrp_sell');
+			
 			let power = false;
 
 			power_btn.addEventListener('click', () => {
@@ -207,6 +432,20 @@
 				}
 			});
 
+			simulation_btc_amount.addEventListener('change', (event) => {
+				simulationCaculate();
+			});
+
+			coin_btc_buy_price.addEventListener('change', (event) => {
+				console.log(Math.round(parseFloat(event.target.value) / parseFloat(bit_xrp_bid_price.value)));
+				bit_xrp_buy_price.value = Math.round(parseFloat(event.target.value) / parseFloat(bit_xrp_bid_price.value));
+			});
+
+			function simulationCaculate() {
+				let start_price  = simulation_btc_amount.value * parseFloat(btcTD.innerHTML);
+				console.log(start_price);
+			}
+
 			function addClass(element, className) {
 				element.className += " " + className;
 			}
@@ -218,17 +457,18 @@
 
 			ipcRenderer.on('send:btc', function(e, btc) {
 				btcTD.innerHTML = btc;
-				coin_xrp_bid_price.value = btc;
+				coin_btc_bid_price.value = btc;
 			});
 			ipcRenderer.on('send:xrp', function(e, xrp) {
 				xrpTD.innerHTML = xrp;
-				
+				coin_xrp_bid_price.value = xrp;				
 			});
 			ipcRenderer.on('send:xrp_bittrex', function(e, xrp_bittrex) {
 				xrp_bittrexTD.innerHTML = xrp_bittrex;
 			});
 			ipcRenderer.on('send:btc_xrp', function(e, btc_xrp) {
 				btc_xrpTD.innerHTML = btc_xrp;
+				bit_xrp_bid_price.value = btc_xrp;
 			});
 			ipcRenderer.on('send:diff', function(e, diff) {
 				diffTD.innerHTML = diff;
@@ -238,44 +478,51 @@
 			});
 
 			ipcRenderer.on('coinone:xrp_balance', function(e, xrp_balance) {
-				c_xrp_balance.innerHTML = xrp_balance;
+				coin_xrp_balance.innerHTML = xrp_balance;
 			});
 			ipcRenderer.on('coinone:xrp_available', function(e, xrp_available) {
-				coin_available_xrp.value = xrp_available;
+				coin_available_xrp_sell.value = xrp_available;
 			});
 			ipcRenderer.on('coinone:xrp_address', function(e, xrp_address) {
-				coin_xrp_address.value = xrp_address;
+				coin_xrp_address.innerHTML = xrp_address;
 			});
 			ipcRenderer.on('coinone:xrp_tag', function(e, xrp_tag) {
-				coin_xrp_tag.value = xrp_tag;
+				coin_xrp_tag.innerHTML = xrp_tag;
 			});
 			ipcRenderer.on('coinone:btc_balance', function(e, btc_balance) {
-				nullIsZero(c_btc_balance, btc_balance);
+				coin_btc_balance.innerHTML = btc_balance;
 			});
 			ipcRenderer.on('coinone:btc_available', function(e, btc_balance) {
-				// nullIsZero(c_btc_balance, btc_balance);
+				coin_available_btc.value = btc_balance;
 			});
 			ipcRenderer.on('coinone:krw_balance', function(e, krw_balance) {
-				coin_krw_buy.value = krw_balance;
+				coin_krw_balance.innerHTML = krw_balance;
+				// coin_krw_buy.value = krw_balance;
 			});
 			ipcRenderer.on('coinone:krw_available', function(e, krw_available) {
 				coin_available_krw_buy.value = krw_available;
 			});
 
 			ipcRenderer.on('bittrex:xrp_balance', function(e, xrp_balance) {
-				nullIsZero(b_xrp_balance, xrp_balance);
+				nullIsZero(bit_xrp_balance, xrp_balance);
+
 			});
 			ipcRenderer.on('bittrex:xrp_available', function(e, xrp_available) {
 				bit_available_xrp.value = xrp_available;
 			});
-			ipcRenderer.on('bittrex:xrp_address', function(e, xrp_address) {
-				bit_xrp_address.value = xrp_address;
+			ipcRenderer.on('bittrex:btc_address', function(e, btc_address) {
+				bit_btc_address.innerHTML = btc_address;
+				console.log(btc_address);
 			});
 			ipcRenderer.on('bittrex:xrp_tag', function(e, xrp_tag) {
 				bit_xrp_tag.value = xrp_tag;
 			});
 			ipcRenderer.on('bittrex:btc_balance', function(e, btc_balance) {
-				nullIsZero(b_btc_balance, btc_balance);
+				nullIsZero(bit_btc_balance, btc_balance);
+				// bit_btc_buy.value = btc_balance;
+			});
+			ipcRenderer.on('bittrex:btc_available', function(e, btc_available) {
+				bit_available_btc_buy.value = btc_available;
 			});
 
 			function nullIsZero(element, balance) {
