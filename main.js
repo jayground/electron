@@ -78,7 +78,7 @@ ipcMain.on('power:on', function(e) {
 		json: true
 	}
 	
-	setInterval(function() {
+	// setInterval(function() {
 		// get coinone all coin balance
 		rp(coin_balance_op)
 			.then((result) => {
@@ -125,7 +125,7 @@ ipcMain.on('power:on', function(e) {
 			.catch((err) => {
 				console.error(err);
 			})
-		}, 60000)
+		// }, 60000)
 	// get initial value
 	rp(coinoneTicker)
 		.then((coinone_result) => {
